@@ -17,9 +17,14 @@ Plugin 'jiangmiao/auto-pairs'
 Plugin 'scrooloose/nerdtree'
 Plugin 'fatih/molokai'
 Plugin 'Yggdroot/indentLine'
+Plugin 'mileszs/ack.vim'
+Plugin 'vim-syntastic/syntastic'
+
 " for javascript
-Plugin 'mephux/vim-jsfmt'
+" Plugin 'mephux/vim-jsfmt'
 Plugin 'pangloss/vim-javascript'
+
+Plugin 'bkad/CamelCaseMotion'
 
 " The following are examples of different formats supported.
 " Keep Plugin commands between vundle#begin/end.
@@ -118,3 +123,38 @@ let g:js_fmt_fail_silently = 0
 let g:js_fmt_autosave = 1
 let g:js_fmt_command = "jsfmt"
 
+
+" for ag
+if executable('ag')
+	let g:ackprg = 'ag --vimgrep'
+endif
+set shellpipe=>
+cnoreabbrev ag Ack!
+nnoremap <Leader>a :Ack!<Space>
+"function Search(string) abort
+"  let saved_shellpipe = &shellpipe
+"  let &shellpipe = '>'
+"  try
+"    execute 'Ack!' shellescape(a:string, 1)
+"  finally
+"    let &shellpipe = saved_shellpipe
+"  endtry
+"endfunction
+" command! -nargs=1 Ag call Search(<f-args>)
+
+call camelcasemotion#CreateMotionMappings('<leader>')
+
+" for yaml
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+
+" for js
+autocmd FileType js setlocal ts=2 sts=2 sw=2 expandtab
+
+" for jenkinsfile
+autocmd BufRead,BufNewFile,BufEnter Jenkinsfile setlocal ts=4 sts=4 sw=4 expandtab
+
+" for golang
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_go_checkers = ['go', 'golint', 'govet']
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
