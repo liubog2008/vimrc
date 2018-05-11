@@ -18,7 +18,9 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'fatih/molokai'
 Plugin 'Yggdroot/indentLine'
 Plugin 'mileszs/ack.vim'
-Plugin 'vim-syntastic/syntastic'
+Plugin 'w0rp/ale'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 
 " for javascript
 " Plugin 'mephux/vim-jsfmt'
@@ -26,22 +28,30 @@ Plugin 'pangloss/vim-javascript'
 
 Plugin 'bkad/CamelCaseMotion'
 
+" for GFM
+Plugin 'junegunn/vim-easy-align'
+Plugin 'mzlogin/vim-markdown-toc'
+
+" trailing
+Plugin 'bronson/vim-trailing-whitespace'
+
+
 " The following are examples of different formats supported.
 " Keep Plugin commands between vundle#begin/end.
 " plugin on GitHub repo
-" 	Plugin 'tpope/vim-fugitive'
+"   Plugin 'tpope/vim-fugitive'
 " plugin from http://vim-scripts.org/vim/scripts.html
-" 	Plugin 'L9'
+"   Plugin 'L9'
 " Git plugin not hosted on GitHub
-" 	Plugin 'git://git.wincent.com/command-t.git'
+"   Plugin 'git://git.wincent.com/command-t.git'
 " git repos on your local machine (i.e. when working on your own plugin)
-" 	Plugin 'file:///home/gmarik/path/to/plugin'
+"   Plugin 'file:///home/gmarik/path/to/plugin'
 " The sparkup vim script is in a subdirectory of this repo called vim.
 " Pass the path to set the runtimepath properly.
-" 	Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+"   Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 " Install L9 and avoid a Naming conflict if you've already installed a
 " different version somewhere else.
-" 	Plugin 'ascenator/L9', {'name': 'newL9'}
+"   Plugin 'ascenator/L9', {'name': 'newL9'}
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -62,13 +72,15 @@ set number
 syntax on
 set tabstop=4
 set shiftwidth=4
+set softtabstop=4
+set expandtab
 
 " leader
 let mapleader=";"
 
 " for tmux
-if exists('$TMUX')
-	set term=screen-256color
+if !has('nvim') && exists('$TMUX')
+    set term=screen-256color
 endif
 
 " for NERDTree
@@ -87,7 +99,12 @@ let g:indentLine_char = '|'
 
 " for vim-go
 let g:go_fmt_command = "goimports"
-nmap <silent> gi :GoImplements<CR>
+let g:go_auto_sameids = 1
+let g:go_auto_type_info = 1
+au FileType go nmap <silent> gi :GoImplements<CR>
+au FileType go nmap <leader>gt :GoDeclsDir<CR>
+au FileType go nmap <leader>gc :GoCoverageToggle -short<CR>
+
 
 " for window swap
 function! MarkWindowSwap()
@@ -106,12 +123,12 @@ function! DoWindowSwap()
     "Switch to dest and shuffle source->dest
     exe curNum . "wincmd w"
     "Hide and open so that we aren't prompted and keep history
-    exe 'hide buf' markedBuf 
+    exe 'hide buf' markedBuf
 endfunction
 function! SwapWithRightWindow()
-	call MarkWindowSwap()
-	exe "wincmd l"
-	call DoWindowSwap()
+    call MarkWindowSwap()
+    exe "wincmd l"
+    call DoWindowSwap()
 endfunction
 
 nmap <silent> <leader>mw :call MarkWindowSwap()<CR>
@@ -124,9 +141,12 @@ let g:js_fmt_autosave = 1
 let g:js_fmt_command = "jsfmt"
 
 
+" for header
+autocmd bufnewfile /go/src/github.com/caicloud/*.go so ~/.vim/header.txt
+
 " for ag
 if executable('ag')
-	let g:ackprg = 'ag --vimgrep'
+    let g:ackprg = 'ag --vimgrep'
 endif
 set shellpipe=>
 cnoreabbrev ag Ack!
@@ -147,6 +167,11 @@ call camelcasemotion#CreateMotionMappings('<leader>')
 " for yaml
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
+" for markdown
+au FileType markdown vmap <Leader><Bslash> :EasyAlign*<Bar><Enter>
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
 " for js
 autocmd FileType js setlocal ts=2 sts=2 sw=2 expandtab
 
@@ -154,7 +179,36 @@ autocmd FileType js setlocal ts=2 sts=2 sw=2 expandtab
 autocmd BufRead,BufNewFile,BufEnter Jenkinsfile setlocal ts=4 sts=4 sw=4 expandtab
 
 " for golang
-let g:syntastic_aggregate_errors = 1
-let g:syntastic_go_checkers = ['go', 'golint', 'govet']
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
+" let g:syntastic_aggregate_errors = 1
+" let g:syntastic_go_checkers = ['gometalinter']
+
+" for neomake
+" call neomake#configure#automake('nw', 1000)
+
+" for ale
+let g:ale_linters = {
+            \ 'go': ['gometalinter'],
+            \ 'python': ['flake8', 'pylint'],
+            \ }
+
+let g:ale_fixers = {
+            \ 'python': ['autopep8', 'yapf', 'isort'],
+            \ }
+
+let g:ale_sign_column_always = 1
+let g:ale_lint_on_enter = 0
+let g:ale_fix_on_save = 1
+let g:ale_echo_msg_format = '[%linter%] %s'
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
+
+" ycm
+let g:ycm_python_binary_path = 'python'
+nnoremap gd :YcmCompleter GoTo<CR>
+nnoremap gr :YcmCompleter GoToReferences<CR>
+
+" airline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#ale#enabled = 1
+let g:airline#extensions#whitespace#mixed_indent_algo = 2
+let airline#extensions#c_like_langs = ['c', 'cpp', 'cuda', 'go', 'javascript', 'ld', 'php']
