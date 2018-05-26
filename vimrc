@@ -22,9 +22,10 @@ Plugin 'w0rp/ale'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 
-" for javascript
+" for javascript and react
 " Plugin 'mephux/vim-jsfmt'
 Plugin 'pangloss/vim-javascript'
+Plugin 'mxw/vim-jsx'
 
 Plugin 'bkad/CamelCaseMotion'
 
@@ -174,7 +175,8 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
 " for js
-autocmd FileType js setlocal ts=2 sts=2 sw=2 expandtab
+autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
+autocmd BufRead,BufNewFile,BufEnter .eslintrc setlocal ts=2 sts=2 sw=2 expandtab
 
 " for jenkinsfile
 autocmd BufRead,BufNewFile,BufEnter Jenkinsfile setlocal ts=4 sts=4 sw=4 expandtab
