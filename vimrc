@@ -212,3 +212,6 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#whitespace#mixed_indent_algo = 2
 let airline#extensions#c_like_langs = ['c', 'cpp', 'cuda', 'go', 'javascript', 'ld', 'php']
+
+" for json
+set conceallevel=0
