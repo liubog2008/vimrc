@@ -27,6 +27,9 @@ Plugin 'vim-airline/vim-airline-themes'
 Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
 
+" for rust
+Plugin 'rust-lang/rust.vim'
+
 Plugin 'bkad/CamelCaseMotion'
 
 " for GFM
@@ -35,6 +38,9 @@ Plugin 'mzlogin/vim-markdown-toc'
 
 " trailing
 Plugin 'bronson/vim-trailing-whitespace'
+
+" graphviz
+Plugin 'wannesm/wmgraphviz.vim'
 
 
 " The following are examples of different formats supported.
@@ -76,6 +82,10 @@ set shiftwidth=4
 set softtabstop=4
 set expandtab
 
+" for nvim
+let g:python_host_prog = '/usr/bin/python'
+let g:python3_host_prog = '/usr/local/bin/python3'
+
 " leader
 let mapleader=";"
 
@@ -101,6 +111,7 @@ let g:indentLine_char = '|'
 
 " for vim-go
 let g:go_fmt_command = "goimports"
+let g:go_def_mode='gopls'
 let g:go_auto_sameids = 1
 let g:go_auto_type_info = 1
 au FileType go nmap <silent> gi :GoImplements<CR>
@@ -174,6 +185,9 @@ au FileType markdown vmap <Leader><Bslash> :EasyAlign*<Bar><Enter>
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
+" for html
+autocmd FileType html setlocal ts=2 sts=2 sw=2 expandtab
+
 " for js
 autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
 autocmd BufRead,BufNewFile,BufEnter .eslintrc setlocal ts=2 sts=2 sw=2 expandtab
@@ -190,23 +204,30 @@ autocmd BufRead,BufNewFile,BufEnter Jenkinsfile setlocal ts=4 sts=4 sw=4 expandt
 
 " for ale
 let g:ale_linters = {
-            \ 'go': ['gometalinter'],
+            \ 'go': ['golangci-lint'],
             \ 'python': ['flake8', 'pylint'],
+            \ 'rust': ['cargo', 'rls'],
             \ }
 
 let g:ale_fixers = {
             \ 'python': ['autopep8', 'yapf', 'isort'],
+            \ 'rust': ['rustfmt'],
             \ }
 
+let g:ale_go_golangci_lint_package = 1
 let g:ale_sign_column_always = 1
+
 let g:ale_lint_on_enter = 0
 let g:ale_fix_on_save = 1
 let g:ale_echo_msg_format = '[%linter%] %s'
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+let g:ale_open_list = 1
 nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
 " ycm
-let g:ycm_python_binary_path = 'python'
+let g:ycm_python_binary_path = '/usr/local/bin/python3'
 nnoremap gd :YcmCompleter GoTo<CR>
 nnoremap gr :YcmCompleter GoToReferences<CR>
 
@@ -218,3 +239,8 @@ let airline#extensions#c_like_langs = ['c', 'cpp', 'cuda', 'go', 'javascript', '
 
 " for json
 set conceallevel=0
+
+" for graphviz
+
+" for neovim terminal
+tnoremap <C-[> <C-\><C-n>
