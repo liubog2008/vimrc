@@ -1,67 +1,51 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
+" set the runtime path to include vim-plug and initialize
+call plug#begin('~/.vim/bundle')
 
 " let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'tpope/vim-obsession'
-Plugin 'fatih/vim-go'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'tpope/vim-surround'
-Plugin 'jiangmiao/auto-pairs'
-Plugin 'scrooloose/nerdtree'
-Plugin 'fatih/molokai'
-Plugin 'Yggdroot/indentLine'
-Plugin 'mileszs/ack.vim'
-Plugin 'w0rp/ale'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
+Plug 'VundleVim/Vundle.vim'
+Plug 'tpope/vim-obsession'
+Plug 'fatih/vim-go'
+Plug 'Valloric/YouCompleteMe'
+Plug 'tpope/vim-surround'
+Plug 'jiangmiao/auto-pairs'
+Plug 'scrooloose/nerdtree'
+Plug 'fatih/molokai'
+Plug 'Yggdroot/indentLine'
+Plug 'mileszs/ack.vim'
+Plug 'w0rp/ale'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 " for javascript and react
-" Plugin 'mephux/vim-jsfmt'
-Plugin 'pangloss/vim-javascript'
-Plugin 'mxw/vim-jsx'
+" Plug 'mephux/vim-jsfmt'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
 
 " for rust
-Plugin 'rust-lang/rust.vim'
+Plug 'rust-lang/rust.vim'
 
-Plugin 'bkad/CamelCaseMotion'
+Plug 'bkad/CamelCaseMotion'
 
 " for GFM
-Plugin 'junegunn/vim-easy-align'
-Plugin 'mzlogin/vim-markdown-toc'
+Plug 'junegunn/vim-easy-align'
+Plug 'mzlogin/vim-markdown-toc'
 
 " trailing
-Plugin 'bronson/vim-trailing-whitespace'
+Plug 'bronson/vim-trailing-whitespace'
 
 " graphviz
-Plugin 'wannesm/wmgraphviz.vim'
+Plug 'wannesm/wmgraphviz.vim'
 
+" for lsp
+Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
 
-" The following are examples of different formats supported.
-" Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
-"   Plugin 'tpope/vim-fugitive'
-" plugin from http://vim-scripts.org/vim/scripts.html
-"   Plugin 'L9'
-" Git plugin not hosted on GitHub
-"   Plugin 'git://git.wincent.com/command-t.git'
-" git repos on your local machine (i.e. when working on your own plugin)
-"   Plugin 'file:///home/gmarik/path/to/plugin'
-" The sparkup vim script is in a subdirectory of this repo called vim.
-" Pass the path to set the runtimepath properly.
-"   Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-" Install L9 and avoid a Naming conflict if you've already installed a
-" different version somewhere else.
-"   Plugin 'ascenator/L9', {'name': 'newL9'}
 
 " All of your Plugins must be added before the following line
-call vundle#end()            " required
+call plug#end()            " required
+
 filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
 "filetype plugin on
@@ -114,9 +98,11 @@ let g:go_fmt_command = "goimports"
 let g:go_def_mode='gopls'
 let g:go_auto_sameids = 1
 let g:go_auto_type_info = 1
+let g:go_def_mapping_enabled = 0
 au FileType go nmap <silent> gi :GoImplements<CR>
 au FileType go nmap <leader>gt :GoDeclsDir<CR>
 au FileType go nmap <leader>gc :GoCoverageToggle -short<CR>
+au FileType go nmap gd :GoDef<CR>
 
 
 " for window swap
@@ -181,7 +167,7 @@ call camelcasemotion#CreateMotionMappings('<leader>')
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 " for markdown
-au FileType markdown vmap <Leader><Bslash> :EasyAlign*<Bar><Enter>
+au FileType markdown vmap <tab> :EasyAlign*<Bar><Enter>
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
@@ -228,8 +214,8 @@ nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
 " ycm
 let g:ycm_python_binary_path = '/usr/local/bin/python3'
-nnoremap gd :YcmCompleter GoTo<CR>
-nnoremap gr :YcmCompleter GoToReferences<CR>
+" nnoremap gd :YcmCompleter GoTo<CR>
+" nnoremap gr :YcmCompleter GoToReferences<CR>
 
 " airline
 let g:airline#extensions#tabline#enabled = 1
@@ -244,3 +230,12 @@ set conceallevel=0
 
 " for neovim terminal
 tnoremap <C-[> <C-\><C-n>
+
+" for lsp
+let g:LanguageClient_serverCommands = {
+    \ 'rust': ['ra_lsp_server'],
+    \ }
+
+" for rust
+au FileType rust nnoremap gd :call LanguageClient#textDocument_definition()<CR>
+
